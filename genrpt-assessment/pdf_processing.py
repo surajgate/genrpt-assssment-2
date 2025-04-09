@@ -320,9 +320,5 @@ def batch_process_pdfs(directory_path: str) -> List[dict]:
 
 
 if __name__ == "__main__":
-    # Single file processing
     file_path = "data/IPL_Teams.pdf"
     process_pdf(file_path, use_ocr=True)
-
-    # Uncomment to process all PDFs in a directory
-    # batch_process_pdfs("data/pdfs")

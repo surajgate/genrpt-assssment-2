@@ -1,0 +1,129 @@
+{
+  "table_info": {
+    "matches": {
+      "description": "This table stores detailed records of cricket matches including match dates, venues, teams ('Chennai Super Kings', 'Deccan Chargers', 'Delhi Capitals', 'Delhi Daredevils', 'Gujarat Lions','Gujarat Titans', 'Kings XI Punjab', 'Kochi Tuskers Kerala', 'Kolkata Knight Riders', 'Lucknow Super Giants', 'Mumbai Indians', 'Pune Warriors', 'Punjab Kings', 'Rajasthan Royals', 'Rising Pune Supergiant', 'Royal Challengers Bangalore', 'Sunrisers Hyderabad'), results, and umpiring details.",
+      "columns": [
+          {
+            "id": {
+              "type": "integer",
+              "description": "Unique identifier for the match record."
+            }
+          },
+          {
+            "season": {
+              "type": "string",
+              "description": "Season in which the match was played (e.g., '2007/08', '2009', '2009/10', etc...)."
+            }
+          },
+          {
+            "city": {
+              "type": "string",
+              "description": "City where the match was held."
+            }
+          },
+          {
+            "date": {
+              "type": "date",
+              "description": "Date on which the match took place (formatted as YYYY-MM-DD)."
+            }
+          },
+          {
+            "match_type": {
+              "type": "string",
+              "description": "Type of match (e.g., 'League', '3rd Place Play-Off', 'Elimination Final', 'Eliminator', 'Semi Final', 'Final', 'Qualifier 1', 'Qualifier 2')."
+            }
+          },
+          {
+            "player_of_match": {
+              "type": "string",
+              "description": "Name of the player awarded the 'Man of the Match'."
+            }
+          },
+          {
+            "venue": {
+              "type": "string",
+              "description": "Name of the stadium or venue where the match was played."
+            }
+          },
+          {
+            "team1": {
+              "type": "string",
+              "description": "Name of the first team (could be considered the home team or the team assigned as 'team1')."
+            }
+          },
+          {
+            "team2": {
+              "type": "string",
+              "description": "Name of the second team (the opposing team)."
+            }
+          },
+          {
+            "toss_winner": {
+              "type": "string",
+              "description": "Name of the team that won the toss."
+            }
+          },
+          {
+            "toss_decision": {
+              "type": "string",
+              "description": "Decision taken by the toss-winning team (typically 'bat' or 'field')."
+            }
+          },
+          {
+            "winner": {
+              "type": "string",
+              "description": "Name of the team that won the match."
+            }
+          },
+          {
+            "result": {
+              "type": "string",
+              "description": "Type of victory achieved by the winning team (e.g., 'runs', 'wickets', 'tie', 'no result')."
+            }
+          },
+          {
+            "result_margin": {
+              "type": "integer",
+              "description": "Margin of victory, either in runs or wickets, depending on the result type."
+            }
+          },
+          {
+            "target_runs": {
+              "type": "integer",
+              "description": "Total runs set as a target for the chasing team."
+            }
+          },
+          {
+            "target_overs": {
+              "type": "integer",
+              "description": "Number of overs allocated for the target (typically 20 overs in a T20 match)."
+            }
+          },
+          {
+            "super_over": {
+              "type": "string",
+              "description": "Indicator whether a super over was played ('Y' for yes, 'N' for no)."
+            }
+          },
+          {
+            "method": {
+              "type": "string",
+              "description": "Method used to decide the match result in special circumstances (e.g., D/L) or 'NA' if not applicable."
+            }
+          },
+          {
+            "umpire1": {
+              "type": "string",
+              "description": "Name of the first umpire officiating the match."
+            }
+          },
+          {
+            "umpire2": {
+              "type": "string",
+              "description": "Name of the second umpire officiating the match."
+            }
+          }
+      ]
+    }
+  }
+}

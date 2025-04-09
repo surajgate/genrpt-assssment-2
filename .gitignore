@@ -1,0 +1,5 @@
+# .env file.
+.env
+
+# Python environment folder
+venv

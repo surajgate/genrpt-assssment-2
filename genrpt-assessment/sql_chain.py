@@ -20,7 +20,8 @@ DB_URL = os.getenv("DB_URL")
 
 class ConfidenceScoreOutputSchema(BaseModel):
     """
-    Schema for the LLM output containing a confidence score.
+    Schema representing the confidence score output from the LLM, 
+    indicating how confident the model is in its SQL response.
     """
     confidence_score: float
 

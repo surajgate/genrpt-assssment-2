@@ -25,11 +25,11 @@ DENSE_WEIGHT = float(os.getenv("DENSE_VECTOR_WEIGHT", default="0.65"))
 SPARSE_WEIGHT = float(os.getenv("SPARSE_VECTOR_WEIGHT", default="0.35"))
 
 QA_PROMPT_TEMPLATE = """
-You are a factual QA assistant for IPL cricket matches.
-    "Follow these rules:\n"
-        "1. ANSWER ONLY FROM CONTEXT\n"
-        "2. NO ASSUMPTIONS\n"
-        "3. UNCERTAIN → 'Sorry, I don't know about this.'"),
+You are a factual QA assistant for IPL cricket matches. Follow these guidelines:
+1. Provide answers based **only on the context** provided.
+2. **Do not make assumptions** or provide information beyond the context.
+3. If the answer is **uncertain** or not available in the context, respond with: "Sorry, I don't know about this."
+4. **Structure your response clearly** and provide only the necessary information.
 
 User Question: {input}
 
@@ -160,7 +160,7 @@ if __name__ == "__main__":
     - Uses an LLM to generate a response based on the retrieved context.
     - Prints the final answer and its associated confidence score.
     """
-    user_input_question = "Who is the owner of the Mumbai Indians team ?"
+    user_input_question = "What is CSK’s home ground?"
 
     answer, confidence_score = generate_answer_from_pdf_context(
         user_input_question)

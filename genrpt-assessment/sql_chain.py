@@ -1,5 +1,4 @@
 import os
-import json
 from pydantic import BaseModel
 
 from sqlalchemy import create_engine, text
@@ -16,8 +15,14 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DB_URL = os.getenv("DB_URL")
 
+class ConfidenceScoreOutputSchema(BaseModel):
+        """
+        Schema for the LLM output containing a confidence score.
+        """
+        confidence_score: float
+
 with open("data/ipl_datadict.json", "r") as f:
-    table_info = json.dumps(json.load(f))
+    table_info = f.read()
 
 SQL_PROMPT = """
 You are a SQL expert. Given an input question, create a syntactically correct postgresql query to run.
@@ -159,7 +164,7 @@ def get_database_answer(question: str):
                 "question": RunnablePassthrough(),
                 "sql_query": RunnablePassthrough(),
                 "sql_result": lambda _: sql_result
-            })
+        })
 
         chain = setup_and_retrieval | prompt | llm | output_parser
 
@@ -195,13 +200,7 @@ def get_sql_confidence_score(question: str, sql_query: str, sql_response: str) -
         model_name="gpt-4o"
     )
 
-    class ConfidenceScoreSchema(BaseModel):
-        """
-        Schema for the LLM output containing a confidence score.
-        """
-        confidence_score: float
-
-    chain = prompt | llm.with_structured_output(ConfidenceScoreSchema)
+    chain = prompt | llm.with_structured_output(ConfidenceScoreOutputSchema)
 
     response = chain.invoke({
         "question": question,

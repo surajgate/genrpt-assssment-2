@@ -1,14 +1,16 @@
 import os
+
+from dotenv import load_dotenv
 from pydantic import BaseModel
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
-from dotenv import load_dotenv
 
 load_dotenv()
 

@@ -53,17 +53,17 @@ Give the confidence score between 0-1 by analyzing provided user question, previ
 """
 
 
-def generate_sql_query(input_question, data_dictionary=table_info, prompt=SQL_PROMPT):
+def generate_sql_query(input_question: str, data_dictionary=table_info, prompt: str = SQL_PROMPT) -> str:
     """
-    Get a SQL query based on the input data dictionary and prompt.
+    Generates a PostgreSQL SELECT query using an LLM based on the user's input question and schema.
 
     Args:
-        input_question (str): The input question related to the SQL query.
-        data_dictionary (dict): A dictionary containing table information.
-        prompt (str): The prompt to be used for generating the SQL query.
+        input_question (str): The user's natural language question.
+        data_dictionary (str): Serialized JSON string of the database schema.
+        prompt (str): The SQL generation prompt with instructions.
 
     Returns:
-        str: The generated SQL query.
+        str: The generated SQL query or a fallback message if unsupported.
     """
     prompt = ChatPromptTemplate.from_messages(
         [
@@ -78,30 +78,30 @@ def generate_sql_query(input_question, data_dictionary=table_info, prompt=SQL_PR
     )
 
     output_parser = StrOutputParser()
-    setup_and_retrieval = RunnableParallel(
-        {
-            "input": RunnablePassthrough(),
-            "table_info": lambda _: data_dictionary,
-            "top_k": lambda _: 100,
-        },
-    )
+    setup_and_retrieval = RunnableParallel({
+        "input": RunnablePassthrough(),
+        "table_info": lambda _: data_dictionary,
+        "top_k": lambda _: 100,
+    })
+
     chain = setup_and_retrieval | prompt | llm | output_parser
 
     sql = chain.invoke(input_question)
-
     return sql
 
 
 def execute_sql_query(query: str, db_url: str = DB_URL):
     """
-    Executes a PostgreSQL query using SQLAlchemy and returns results.
+    Executes a SQL query on a PostgreSQL database using SQLAlchemy.
 
     Args:
-        query: The SQL query to execute.
-        db_url: The PostgreSQL database URL (e.g., "postgresql://- user:password@host:port/database").
+        query (str): The SQL query to execute.
+        db_url (str): The SQLAlchemy-compatible database connection string.
 
     Returns:
-        dict: List of dictionaries with query results or None if an error occurs.
+        tuple: A tuple containing:
+            - List[Dict[str, Any]] or str: Query result or error message.
+            - bool: True if query executed successfully, False otherwise.
     """
     engine = create_engine(db_url)
 
@@ -121,19 +121,23 @@ def execute_sql_query(query: str, db_url: str = DB_URL):
             return "Sorry, I'm unable to execute the SQL query at the moment.", False
 
 
-def get_database_answer(question):
+def get_database_answer(question: str):
     """
-    Formats SQL results into a user-friendly text representation.
+    Gets a natural language answer from the database by generating and executing a SQL query,
+    then formatting the result using LLM.
 
     Args:
-        question (str): The original user question.
+        question (str): The user's natural language question.
 
     Returns:
-        str: Formatted text representation of the SQL result.
+        tuple: A tuple of:
+            - str: Original question.
+            - str: SQL query generated.
+            - str: Final natural language response or error message.
     """
-
     sql_query = generate_sql_query(question)
     sql_result, is_executed = execute_sql_query(sql_query)
+
     if not is_executed:
         return question, sql_query, sql_result
     else:
@@ -151,13 +155,11 @@ def get_database_answer(question):
         )
 
         output_parser = StrOutputParser()
-        setup_and_retrieval = RunnableParallel(
-            {
+        setup_and_retrieval = RunnableParallel({
                 "question": RunnablePassthrough(),
                 "sql_query": RunnablePassthrough(),
                 "sql_result": lambda _: sql_result
-            },
-        )
+            })
 
         chain = setup_and_retrieval | prompt | llm | output_parser
 
@@ -170,14 +172,23 @@ def get_database_answer(question):
         return question, sql_query, sql_response
 
 
-def get_sql_confidence_score(question, sql_query, sql_response):
-    prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", SQL_CONFIDENCE_SCORE),
-            ("human",
-             "User question: {question}\nSQL Query: {sql_query}\nSQL Response: {sql_response}"),
-        ],
-    )
+def get_sql_confidence_score(question: str, sql_query: str, sql_response: str) -> float:
+    """
+    Estimates the confidence score (0–1) for the generated SQL response based on the question and response context.
+
+    Args:
+        question (str): User's input question.
+        sql_query (str): The generated SQL query.
+        sql_response (str): The natural language output generated from SQL result.
+
+    Returns:
+        float: A confidence score between 0 and 1.
+    """
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", SQL_CONFIDENCE_SCORE),
+        ("human",
+         "User question: {question}\nSQL Query: {sql_query}\nSQL Response: {sql_response}")
+    ])
 
     llm = ChatOpenAI(
         api_key=OPENAI_API_KEY,
@@ -186,7 +197,7 @@ def get_sql_confidence_score(question, sql_query, sql_response):
 
     class ConfidenceScoreSchema(BaseModel):
         """
-        Schema for confidence score.
+        Schema for the LLM output containing a confidence score.
         """
         confidence_score: float
 
@@ -200,24 +211,21 @@ def get_sql_confidence_score(question, sql_query, sql_response):
 
     return response.confidence_score
 
-# Example usage
-# question = "List all the matches played between Gujarat and Mumbai"
-
-# question, sql, response = get_database_answer(question)
-
-# print(question, sql, response)
-
-# conf_sc = get_sql_confidence_score(question, sql, response)
-
-# print(conf_sc)
-
 
 if __name__ == "__main__":
+    """
+    Example usage of the database QA pipeline. This script:
+    - Accepts a hardcoded user question.
+    - Generates and executes the corresponding SQL.
+    - Formats the result into natural language.
+    - Computes the confidence score for the response.
+    """
     question = "List all the matches played between Gujarat and Mumbai"
     question, sql, response = get_database_answer(question)
 
-    print(question, sql, response)
+    print("\nQuestion:", question)
+    print("\nGenerated SQL Query:\n", sql)
+    print("\nLLM Response:\n", response)
 
-    conf_sc = get_sql_confidence_score(question, sql, response)
-
-    print(conf_sc)
+    conf_score = get_sql_confidence_score(question, sql, response)
+    print("\nConfidence Score:", conf_score)

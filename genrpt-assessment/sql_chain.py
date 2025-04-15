@@ -15,11 +15,13 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 DB_URL = os.getenv("DB_URL")
 
+
 class ConfidenceScoreOutputSchema(BaseModel):
-        """
-        Schema for the LLM output containing a confidence score.
-        """
-        confidence_score: float
+    """
+    Schema for the LLM output containing a confidence score.
+    """
+    confidence_score: float
+
 
 with open("data/ipl_datadict.json", "r") as f:
     table_info = f.read()
@@ -161,9 +163,9 @@ def get_database_answer(question: str):
 
         output_parser = StrOutputParser()
         setup_and_retrieval = RunnableParallel({
-                "question": RunnablePassthrough(),
-                "sql_query": RunnablePassthrough(),
-                "sql_result": lambda _: sql_result
+            "question": RunnablePassthrough(),
+            "sql_query": RunnablePassthrough(),
+            "sql_result": lambda _: sql_result
         })
 
         chain = setup_and_retrieval | prompt | llm | output_parser

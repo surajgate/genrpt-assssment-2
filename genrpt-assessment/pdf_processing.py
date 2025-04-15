@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 from PyPDF2 import PdfReader
 from pdf2image import convert_from_path
 import pytesseract
-from PIL import Image
 
 # Vector storage components
 from langchain_core.documents import Document

@@ -59,7 +59,6 @@ class HybridSimilaritySearchRetriever(VectorStoreRetriever):
 
     Attributes:
         vectorstore (VectorStore): Backend vector store for document retrieval.
-        search_type (str): Retrieval method; defaults to 'similarity_score'.
     """
 
     vectorstore: VectorStore

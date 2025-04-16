@@ -149,21 +149,3 @@ def generate_answer_from_pdf_context(question: str) -> tuple[str, float]:
     response = hybrid_rag_chain.invoke({"input": question})["answer"]
 
     return response.answer, response.confidence_score
-
-
-if __name__ == "__main__":
-    """
-    Example usage of the hybrid PDF QA pipeline. This script:
-    - Accepts a hardcoded user question.
-    - Retrieves relevant document chunks from the Milvus vector store using hybrid search.
-    - Uses an LLM to generate a response based on the retrieved context.
-    - Prints the final answer and its associated confidence score.
-    """
-    user_input_question = "What is CSK’s home ground?"
-
-    answer, confidence_score = generate_answer_from_pdf_context(
-        user_input_question)
-
-    print("\nQuestion:", user_input_question)
-    print("\nLLM Answer:\n", answer)
-    print("\nConfidence Score:", confidence_score)

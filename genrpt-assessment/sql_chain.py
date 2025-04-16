@@ -208,24 +208,3 @@ def get_sql_confidence_score(question: str, sql_query: str, sql_response: str) -
     })
 
     return result.confidence_score
-
-
-if __name__ == "__main__":
-    """
-    Example usage of the database QA pipeline. This script:
-    - Accepts a hardcoded user question.
-    - Generates and executes the corresponding SQL.
-    - Formats the result into natural language.
-    - Computes the confidence score for the response.
-    """
-    user_input_question = "List all the matches played between Gujarat and Mumbai"
-    question, sql_query, readable_response = answer_question_via_database(
-        user_input_question)
-
-    print("\nQuestion:", question)
-    print("\nGenerated SQL Query:\n", sql_query)
-    print("\nLLM Response:\n", readable_response)
-
-    confidence = get_sql_confidence_score(
-        question, sql_query, readable_response)
-    print("\nConfidence Score:", confidence)

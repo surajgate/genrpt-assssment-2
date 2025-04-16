@@ -56,8 +56,3 @@ def generate_rephrased_query(original_question: str) -> str:
         {"original_question": original_question})
 
     return response.rephrased_query
-
-
-if __name__ == "__main__":
-    query = "What are the matches where Gujarat faced Mumbai?"
-    print("\nGenerated Rephrased Query:\n", generate_rephrased_query(query))
